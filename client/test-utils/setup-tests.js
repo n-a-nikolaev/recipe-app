@@ -1,17 +1,17 @@
-import "@testing-library/jest-dom/vitest"
-import { JSDOM } from "jsdom"
-import { vi } from "vitest"
+import "@testing-library/jest-dom/vitest";
+import { JSDOM } from "jsdom";
+import { vi } from "vitest";
 
-const { window } = new JSDOM()
+const { window } = new JSDOM();
 
 // ResizeObserver mock
 const ResizeObserverMock = vi.fn(() => ({
   disconnect: vi.fn(),
   observe: vi.fn(),
   unobserve: vi.fn(),
-}))
-vi.stubGlobal("ResizeObserver", ResizeObserverMock)
-window["ResizeObserver"] = ResizeObserverMock
+}));
+vi.stubGlobal("ResizeObserver", ResizeObserverMock);
+window["ResizeObserver"] = ResizeObserverMock;
 
 // matchMedia mock
 Object.defineProperty(window, "matchMedia", {
@@ -34,20 +34,20 @@ const IntersectionObserverMock = vi.fn(() => ({
   observe: vi.fn(),
   takeRecords: vi.fn(),
   unobserve: vi.fn(),
-}))
-vi.stubGlobal("IntersectionObserver", IntersectionObserverMock)
-window["IntersectionObserver"] = IntersectionObserverMock
+}));
+vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);
+window["IntersectionObserver"] = IntersectionObserverMock;
 
 // Scroll Methods mock
-window.Element.prototype.scrollTo = () => { }
-window.Element.prototype.scrollIntoView = () => { }
+window.Element.prototype.scrollTo = () => {};
+window.Element.prototype.scrollIntoView = () => {};
 
 // requestAnimationFrame mock
-window.requestAnimationFrame = (cb) => setTimeout(cb, 1000 / 60)
+window.requestAnimationFrame = (cb) => setTimeout(cb, 1000 / 60);
 
 // URL object mock
-window.URL.createObjectURL = () => "https://i.pravatar.cc/300"
-window.URL.revokeObjectURL = () => { }
+window.URL.createObjectURL = () => "https://i.pravatar.cc/300";
+window.URL.revokeObjectURL = () => {};
 
 // navigator mock
 Object.defineProperty(window, "navigator", {
@@ -56,16 +56,16 @@ Object.defineProperty(window, "navigator", {
       writeText: vi.fn(),
     },
   },
-})
+});
 
 // Override globalThis
-Object.assign(globalThis, { window, document: window.document })
+Object.assign(globalThis, { window, document: window.document });
 
-const ignoredMessages = ['Could not parse CSS stylesheet']
+const ignoredMessages = ["Could not parse CSS stylesheet"];
 
-vi.spyOn(console, 'error').mockImplementation(message => {
-  if (ignoredMessages.some(v => message.includes(v))) {
-    return
+vi.spyOn(console, "error").mockImplementation((message) => {
+  if (ignoredMessages.some((v) => message.includes(v))) {
+    return;
   }
-  console.info(message)
-})
+  console.info(message);
+});

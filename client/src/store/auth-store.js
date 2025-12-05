@@ -1,21 +1,22 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, devtools } from "zustand/middleware";
 
 export const useAuthStore = create(
+  devtools(
     persist(
-        (set) => ({
-            user: null,
-            token: null,
-            isAuthenticated: false,
+      (set) => ({
+        user: null,
+        token: null,
+        isAuthenticated: false,
 
-            login: (userData, token) =>
-                set({ user: userData, token, isAuthenticated: true }),
+        login: (userData, token) =>
+          set({ user: userData, token, isAuthenticated: true }),
 
-            logout: () =>
-                set({ user: null, token: null, isAuthenticated: false }),
-        }),
-        {
-            name: "auth-storage", // key in localStorage
-        }
+        logout: () => set({ user: null, token: null, isAuthenticated: false }),
+      }),
+      {
+        name: "auth-storage", // key in localStorage
+      }
     )
+  )
 );
