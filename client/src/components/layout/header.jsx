@@ -9,13 +9,16 @@ import {
 } from "@chakra-ui/react";
 import { GiChickenOven } from "react-icons/gi";
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import { ColorModeButton } from "../../ui/color-mode";
-import { useAuthStore } from "../../../store/auth-store";
-import Navigation from "../../routing/navigation";
-import MobileMenu from "../../routing/mobile-menu";
+import { MdLogin, MdLogout } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { ColorModeButton } from "../ui/color-mode";
+import { useAuthStore } from "../../store/auth-store";
+import Navigation from "../routing/navigation";
+import MobileMenu from "../routing/mobile-menu";
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuthStore();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -60,24 +63,25 @@ export default function Navbar() {
               </IconButton>
               <ColorModeButton />
               {isAuthenticated ? (
-                <Button
+                <IconButton
                   size="sm"
                   bg="brand.accent"
                   color="brand.white"
                   _hover={{ bg: "brand.descent" }}
                   onClick={logout}
                 >
-                  Logout
-                </Button>
+                  <MdLogout />
+                </IconButton>
               ) : (
-                <Button
+                <IconButton
                   size="sm"
                   bg="brand.accent"
                   color="brand.white"
+                  onClick={() => navigate("/login")}
                   _hover={{ bg: "brand.descent" }}
                 >
-                  Login
-                </Button>
+                  <MdLogin />
+                </IconButton>
               )}
               <MobileMenu />
             </Flex>

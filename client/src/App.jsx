@@ -1,11 +1,35 @@
-import Navbar from "./components/layout/header";
+import { lazy } from "react";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/layout";
+import Home from "./pages/home";
+import ProtectedRoute from "./components/routing/auth-route";
+import { AddRecipe } from "./pages/recipe";
+import "./index.css";
 
-const App = () => {
+const LoginComponent = lazy(() => import("./pages/login"));
+const RegisterComponent = lazy(() => import("./pages/register"));
+
+export default function App() {
   return (
-    <>
-      <Navbar />
-    </>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route key="home" path="/" element={<Home />} exact={true} />
+        <Route key="login" path="/login" element={<LoginComponent />} />
+        <Route
+          key="register"
+          path="/register"
+          element={<RegisterComponent />}
+        />
+        <Route
+          key="add-recipe"
+          path="/add"
+          element={
+            <ProtectedRoute>
+              <AddRecipe />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+    </Routes>
   );
-};
-
-export default App;
+}
