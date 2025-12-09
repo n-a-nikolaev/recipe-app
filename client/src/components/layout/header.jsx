@@ -1,12 +1,4 @@
-import {
-  Box,
-  Flex,
-  IconButton,
-  HStack,
-  Button,
-  Text,
-  Link,
-} from "@chakra-ui/react";
+import { Box, Flex, IconButton, HStack, Text, Link } from "@chakra-ui/react";
 import { GiChickenOven } from "react-icons/gi";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { MdLogin, MdLogout } from "react-icons/md";
@@ -15,10 +7,28 @@ import { ColorModeButton } from "../ui/color-mode";
 import { useAuthStore } from "../../store/auth-store";
 import Navigation from "../routing/navigation";
 import MobileMenu from "../routing/mobile-menu";
+import { Tooltip } from "../ui/tooltip";
+import { useCallback } from "react";
+import { logoutRequest } from "../../services/logout";
+import { toaster } from "../ui/toaster";
 
-export default function Navbar() {
+export default function Header() {
   const { isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
+
+  const handleLogout = useCallback(async () => {
+    try {
+      const response = await logoutRequest();
+      toaster.create({
+        description: response.data.message || "Logged out successfully",
+        type: "success",
+      });
+      logout();
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  }, [logout, navigate]);
 
   return (
     <>
@@ -52,36 +62,42 @@ export default function Navbar() {
 
           <Flex h={16} alignItems="center" justifyContent="end" gap={8}>
             <Flex alignItems="center" gap={2}>
-              <IconButton
-                size="sm"
-                aria-label="Search"
-                bg="brand.accent"
-                color="brand.white"
-                _hover={{ bg: "brand.descent" }}
-              >
-                <FaMagnifyingGlass />
-              </IconButton>
+              <Tooltip content="Search recipes">
+                <IconButton
+                  size="sm"
+                  aria-label="Search"
+                  bg="brand.accent"
+                  color="brand.white"
+                  _hover={{ bg: "brand.descent" }}
+                >
+                  <FaMagnifyingGlass />
+                </IconButton>
+              </Tooltip>
               <ColorModeButton />
               {isAuthenticated ? (
-                <IconButton
-                  size="sm"
-                  bg="brand.accent"
-                  color="brand.white"
-                  _hover={{ bg: "brand.descent" }}
-                  onClick={logout}
-                >
-                  <MdLogout />
-                </IconButton>
+                <Tooltip content="Logout">
+                  <IconButton
+                    size="sm"
+                    bg="brand.accent"
+                    color="brand.white"
+                    _hover={{ bg: "brand.descent" }}
+                    onClick={handleLogout}
+                  >
+                    <MdLogout />
+                  </IconButton>
+                </Tooltip>
               ) : (
-                <IconButton
-                  size="sm"
-                  bg="brand.accent"
-                  color="brand.white"
-                  onClick={() => navigate("/login")}
-                  _hover={{ bg: "brand.descent" }}
-                >
-                  <MdLogin />
-                </IconButton>
+                <Tooltip content="Login">
+                  <IconButton
+                    size="sm"
+                    bg="brand.accent"
+                    color="brand.white"
+                    onClick={() => navigate("/login")}
+                    _hover={{ bg: "brand.descent" }}
+                  >
+                    <MdLogin />
+                  </IconButton>
+                </Tooltip>
               )}
               <MobileMenu />
             </Flex>

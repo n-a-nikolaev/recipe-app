@@ -1,4 +1,4 @@
-import { Separator } from "@chakra-ui/react";
+import { Box, Separator } from "@chakra-ui/react";
 import NavLink from "../nav-link";
 
 // Example menu structure
@@ -13,12 +13,12 @@ export default function Navigation({ isMobile }) {
   return (
     <>
       {links.map((link, index) => (
-        <>
-          <NavLink key={link.label} href={link.href} isMobile={isMobile}>
+        <Box key={link.label}>
+          <NavLink href={link.href} isMobile={isMobile}>
             {link.label}
           </NavLink>
           {isMobile && index < links.length - 1 && <Separator />}
-        </>
+        </Box>
       ))}
     </>
   );

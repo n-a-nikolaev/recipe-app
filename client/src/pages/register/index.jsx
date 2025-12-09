@@ -1,30 +1,55 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Box, Button, Input, Text, VStack } from "@chakra-ui/react";
+import { useCallback, useState } from "react";
+import {
+  Alert,
+  Box,
+  Button,
+  Field,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { registerRequest } from "../../services/register";
+import { useAuthStore } from "../../store/auth-store";
+import useFormController from "../../hooks/use-form-controller";
+import { toaster } from "../../components/ui/toaster";
 
 export default function Register() {
   const navigate = useNavigate();
+  // get login action from auth store
+  const login = useAuthStore((s) => s.login);
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    values: { username, email, password },
+    onChange,
+  } = useFormController({ username: "", email: "", password: "" });
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleRegister() {
-    try {
-      setLoading(true);
-      setErrMsg("");
+  const handleRegister = useCallback(
+    async (event) => {
+      event.preventDefault();
 
-      await registerRequest(username, email, password);
-      navigate("/login");
-    } catch (err) {
-      setErrMsg(err?.response?.data?.message || "Registration failed");
-    } finally {
-      setLoading(false);
-    }
-  }
+      try {
+        setLoading(true);
+        setErrMsg("");
+
+        const res = await registerRequest(username, email, password);
+
+        toaster.create({
+          description: "User created: username",
+          type: "success",
+        });
+        login(res.data);
+        navigate("/");
+      } catch (err) {
+        setErrMsg(err?.response?.data?.message || "Registration failed");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [username, email, password, login, navigate]
+  );
 
   return (
     <Box
@@ -36,6 +61,7 @@ export default function Register() {
       p={0}
     >
       <VStack
+        as="form"
         bg="cardBg"
         p={6}
         borderRadius="card"
@@ -43,43 +69,64 @@ export default function Register() {
         width="100%"
         maxW="400px"
         boxShadow="card"
+        onSubmit={handleRegister}
       >
         <Text fontSize="2xl" fontWeight="bold">
           Register
         </Text>
-
-        {errMsg && <Text color="tomato">{errMsg}</Text>}
-
-        <Input
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-
-        <Input
-          placeholder="Email"
-          value={email}
-          type="email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <Input
-          placeholder="Password"
-          value={password}
-          type="password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
+        {/* TODO: Extract in a reusable component */}
+        {errMsg && (
+          <Alert.Root status="error">
+            <Alert.Indicator />
+            <Alert.Title>{errMsg}</Alert.Title>
+          </Alert.Root>
+        )}
+        {/* Username field */}
+        <Field.Root>
+          <Field.Label htmlFor="email">Username</Field.Label>
+          <Input
+            placeholder="Username"
+            type="text"
+            name="username"
+            id="username"
+            value={username}
+            onChange={onChange}
+          />
+        </Field.Root>
+        {/* Email field */}
+        <Field.Root>
+          <Field.Label htmlFor="email">Email</Field.Label>
+          <Input
+            placeholder="Email"
+            value={email}
+            type="email"
+            name="email"
+            id="email"
+            required
+            onChange={onChange}
+          />
+        </Field.Root>
+        <Field.Root>
+          <Field.Label htmlFor="password">Password</Field.Label>
+          {/* TODO: Add password strength meter */}
+          <Input
+            placeholder="Password"
+            value={password}
+            type="password"
+            id="password"
+            name="password"
+            onChange={onChange}
+          />
+        </Field.Root>
         <Button
           bg="brand.primary"
           color="brand.white"
           width="100%"
-          onClick={handleRegister}
+          type="submit"
           isDisabled={loading}
         >
           {loading ? "Registering..." : "Register"}
         </Button>
-
         <Button
           variant="outline"
           borderColor="brand.primary"

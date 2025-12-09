@@ -5,10 +5,16 @@ import { ThemeProvider, useTheme } from "next-themes";
 
 import * as React from "react";
 import { LuMoon, LuSun } from "react-icons/lu";
+import { Tooltip } from "./tooltip";
 
 export function ColorModeProvider(props) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system"disableTransitionOnChange {...props} />
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      disableTransitionOnChange
+      {...props}
+    />
   );
 }
 
@@ -40,26 +46,30 @@ export const ColorModeButton = React.forwardRef(function ColorModeButton(
   ref
 ) {
   const { toggleColorMode } = useColorMode();
+  const themeToSwitch = useColorModeValue("dark", "light");
+
   return (
     <ClientOnly fallback={<Skeleton boxSize="9" />}>
-      <IconButton
-        onClick={toggleColorMode}
-        aria-label="Toggle color mode"
-        size="sm"
-        bg="brand.accent"
-        color="brand.white"
-         _hover={{ bg: "brand.descent" }}
-        ref={ref}
-        {...props}
-        css={{
-          _icon: {
-            width: "5",
-            height: "5",
-          },
-        }}
-      >
-        <ColorModeIcon />
-      </IconButton>
+      <Tooltip content={`Switch to ${themeToSwitch} mode`}>
+        <IconButton
+          onClick={toggleColorMode}
+          aria-label="Toggle color mode"
+          size="sm"
+          bg="brand.accent"
+          color="brand.white"
+          _hover={{ bg: "brand.descent" }}
+          ref={ref}
+          {...props}
+          css={{
+            _icon: {
+              width: "5",
+              height: "5",
+            },
+          }}
+        >
+          <ColorModeIcon />
+        </IconButton>
+      </Tooltip>
     </ClientOnly>
   );
 });

@@ -1,9 +1,18 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Alert, Box, Button, Input, Text, VStack } from "@chakra-ui/react";
+import {
+  Alert,
+  Box,
+  Button,
+  Field,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { loginRequest } from "../../services/login";
 import { useAuthStore } from "../../store/auth-store";
 import useFormController from "../../hooks/use-form-controller";
+import { toaster } from "../../components/ui/toaster";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,22 +26,26 @@ export default function Login() {
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = useCallback(async (event) => {
-    event.preventDefault();
+  const handleLogin = useCallback(
+    async (event) => {
+      event.preventDefault();
 
-    try {
-      setErrMsg("");
-      setLoading(true);
-      const res = await loginRequest(email, password);
-      console.log(res);
-      login(res.data);
-      navigate("/");
-    } catch (err) {
-      setErrMsg(err?.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  }, [email, password, login, navigate]);
+      try {
+        setErrMsg("");
+        setLoading(true);
+        const response = await loginRequest(email, password);
+
+        toaster.create({ description: `Welcome, ${response.data.username}`, type: "success" });
+        login(response.data);
+        navigate("/");
+      } catch (err) {
+        setErrMsg(err?.response?.data?.message || "Login failed");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [email, password, login, navigate]
+  );
 
   return (
     <Box
@@ -57,32 +70,37 @@ export default function Login() {
         <Text fontSize="2xl" fontWeight="bold">
           Login
         </Text>
-
+        {/* Extract in a reusable component */}
         {errMsg && (
-          <Alert.Root status="error" title="This is the alert title">
+          <Alert.Root status="error">
             <Alert.Indicator />
             <Alert.Title>{errMsg}</Alert.Title>
           </Alert.Root>
         )}
-
-        <Input
-          placeholder="Email"
-          value={email}
-          type="email"
-          name="email"
-          required
-          onChange={onChange}
-        />
-
-        <Input
-          placeholder="Password"
-          value={password}
-          type="password"
-          name="password"
-          required
-          onChange={onChange}
-        />
-
+        <Field.Root>
+          <Field.Label htmlFor="email">Password</Field.Label>
+          <Input
+            placeholder="Email"
+            value={email}
+            type="email"
+            name="email"
+            id="email"
+            required
+            onChange={onChange}
+          />
+        </Field.Root>
+        <Field.Root>
+          <Field.Label htmlFor="password">Password</Field.Label>
+          <Input
+            placeholder="Password"
+            value={password}
+            type="password"
+            name="password"
+            id="password"
+            required
+            onChange={onChange}
+          />
+        </Field.Root>
         <Button
           bg="brand.primary"
           color="brand.white"
@@ -92,7 +110,6 @@ export default function Login() {
         >
           {loading ? "Logging in..." : "Login"}
         </Button>
-
         <Button
           variant="outline"
           borderColor="brand.primary"

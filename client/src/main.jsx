@@ -5,6 +5,7 @@ import App from "./App";
 import Provider from "./components/ui/provider"; // chakra + theme wrapper
 import { Box } from "@chakra-ui/react";
 import reactLove from "./assets/react-love.svg";
+import { Toaster } from "./components/ui/toaster";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         }
       >
         <App />
+        <Toaster />
       </Suspense>
     </Provider>
   </BrowserRouter>
