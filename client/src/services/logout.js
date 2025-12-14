@@ -1,4 +1,3 @@
-import { requestToApi } from "./request-to-api";
+import requestToApi from "./request-to-api";
 
-export const logoutRequest = () =>
-  requestToApi.post("/auth/logout");
+export const logoutRequest = () => requestToApi.post("/auth/logout");

@@ -22,7 +22,16 @@ export default function App() {
         />
         <Route
           key="add-recipe"
-          path="/add"
+          path="/recipe/add"
+          element={
+            <ProtectedRoute>
+              <AddRecipe />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          key="edit-recipe"
+          path="/recipe/edit/:id"
           element={
             <ProtectedRoute>
               <AddRecipe />

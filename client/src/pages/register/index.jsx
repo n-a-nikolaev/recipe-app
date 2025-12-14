@@ -74,13 +74,7 @@ export default function Register() {
         <Text fontSize="2xl" fontWeight="bold">
           Register
         </Text>
-        {/* TODO: Extract in a reusable component */}
-        {errMsg && (
-          <Alert.Root status="error">
-            <Alert.Indicator />
-            <Alert.Title>{errMsg}</Alert.Title>
-          </Alert.Root>
-        )}
+        <ErrorMessage message={errMsg} />
         {/* Username field */}
         <Field.Root>
           <Field.Label htmlFor="email">Username</Field.Label>

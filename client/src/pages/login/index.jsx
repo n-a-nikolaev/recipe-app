@@ -13,6 +13,7 @@ import { loginRequest } from "../../services/login";
 import { useAuthStore } from "../../store/auth-store";
 import useFormController from "../../hooks/use-form-controller";
 import { toaster } from "../../components/ui/toaster";
+import ErrorMessage from "../../components/error-message";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -35,7 +36,10 @@ export default function Login() {
         setLoading(true);
         const response = await loginRequest(email, password);
 
-        toaster.create({ description: `Welcome, ${response.data.username}`, type: "success" });
+        toaster.create({
+          description: `Welcome, ${response.data.username}`,
+          type: "success",
+        });
         login(response.data);
         navigate("/");
       } catch (err) {
@@ -70,13 +74,7 @@ export default function Login() {
         <Text fontSize="2xl" fontWeight="bold">
           Login
         </Text>
-        {/* Extract in a reusable component */}
-        {errMsg && (
-          <Alert.Root status="error">
-            <Alert.Indicator />
-            <Alert.Title>{errMsg}</Alert.Title>
-          </Alert.Root>
-        )}
+        <ErrorMessage message={errMsg} />
         <Field.Root>
           <Field.Label htmlFor="email">Password</Field.Label>
           <Input

@@ -1,0 +1,1 @@
+export const CONTENT_HEIGHT = "calc(100vh - var(--header-height) - var(--footer-height))";

@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
 import Navbar from "./header";
 import Footer from "./footer";
+import { CONTENT_HEIGHT } from "../../utils";
 
 export default function Layout() {
   return (
@@ -11,7 +12,7 @@ export default function Layout() {
         id="main-content"
         bg="bg"
         color="fg"
-        minH="calc(100vh - var(--header-height) - var(--footer-height))"
+        minH={CONTENT_HEIGHT}
         display="flex"
         alignItems="start"
         justifyContent="center"
